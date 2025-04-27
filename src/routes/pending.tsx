@@ -18,14 +18,15 @@ function Pending() {
 					});
 
 					if (registration.installing) {
-						setSwState('installing');
+						registration.installing.addEventListener('statechange', () => {
+							console.log('Installing worker state:', registration.installing?.state);
+							if (registration.installing?.state === 'activated') {
+								setSwState('activated');
+							}
+						});
 					} else if (registration.waiting) {
-						console.log('Service worker installed');
-					} else if (registration.active) {
 						setSwState('activated');
-					}
-
-					if (registration.active?.state === 'activated') {
+					} else if (registration.active) {
 						setSwState('activated');
 					}
 
