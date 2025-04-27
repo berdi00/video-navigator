@@ -5,6 +5,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
+import registerServiceWorker from './utils/register';
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -17,22 +18,7 @@ declare module '@tanstack/react-router' {
 }
 
 // Register the service worker if it's not already registered
-if ('serviceWorker' in navigator) {
-	try {
-		const registration = await navigator.serviceWorker.register('sw.js', {
-			scope: './',
-		});
-		if (registration.installing) {
-			console.log('Service worker installing');
-		} else if (registration.waiting) {
-			console.log('Service worker installed');
-		} else if (registration.active) {
-			console.log('Service worker active');
-		}
-	} catch (error) {
-		console.error(`Registration failed with ${error}`);
-	}
-}
+registerServiceWorker();
 
 // Render the app
 const rootElement = document.getElementById('root')!;
