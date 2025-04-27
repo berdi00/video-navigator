@@ -31,15 +31,11 @@ function Index() {
 	return (
 		<div className='home'>
 			{loading && <h1>Loading...</h1>}
+			<button onClick={registerWorker} className='start_button'>
+				Start
+			</button>
 			{!loading && init && (
-				<div>
-					<button onClick={registerWorker} className='start_button'>
-						Start
-					</button>
-					<h3>
-						{isRegistered ? 'Successfully Registered worker' : 'Failure in registering worker'}
-					</h3>
-				</div>
+				<h3>{isRegistered ? 'Successfully Registered worker' : 'Failure in registering worker'}</h3>
 			)}
 		</div>
 	);
