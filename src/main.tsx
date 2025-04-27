@@ -19,28 +19,41 @@ declare module '@tanstack/react-router' {
 // Register the service worker if it's not already registered
 
 if ('serviceWorker' in navigator) {
-	console.log('This code runs');
+	console.log('Service worker support found in browser');
 
-	// Wrap the code inside an async function
 	const registerServiceWorker = async () => {
 		try {
-			const registration = await navigator.serviceWorker.register('sw.js', {
-				scope: './',
+			console.log('Attempting to register service worker...');
+			const registration = await navigator.serviceWorker.register('/sw.js', {
+				// Ensure leading slash
+				scope: '/',
 			});
-			if (registration.installing) {
-				console.log('Service worker installing');
-			} else if (registration.waiting) {
-				console.log('Service worker installed');
-			} else if (registration.active) {
-				console.log('Service worker active');
-			}
+			console.log('Service worker registration successful:', registration);
+
+			registration.addEventListener('updatefound', () => {
+				console.log('New service worker update found!');
+				const installingWorker = registration.installing;
+				if (installingWorker) {
+					installingWorker.addEventListener('statechange', () => {
+						console.log('Service worker state:', installingWorker.state);
+						if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+							console.log(
+								'New content is available and will be used when all tabs for this page are closed.'
+							);
+						} else if (installingWorker.state === 'installed') {
+							console.log('Content is cached for offline use.');
+						}
+					});
+				}
+			});
 		} catch (error) {
-			console.error(`Registration failed with ${error}`);
+			console.error('Service worker registration failed:', error);
 		}
 	};
 
-	// Call the async function
-	registerServiceWorker();
+	window.addEventListener('load', registerServiceWorker); // Ensure DOM is loaded
+} else {
+	console.log('Service workers are not supported in this browser.');
 }
 
 // Render the app
