@@ -17,15 +17,13 @@ function Index() {
 					scope: '/',
 				});
 
-				// Listen for state changes
-				registration.addEventListener('statechange', () => {
-					console.log('SW State Changed:', registration.active?.state);
-					if (registration.installing) {
-						setSwState('installing');
-					} else if (registration.active?.state === 'activated') {
-						setSwState('activated');
-					}
-				});
+				if (registration.installing) {
+					setSwState('installing');
+				} else if (registration.waiting) {
+					console.log('Service worker installed');
+				} else if (registration.active) {
+					setSwState('activated');
+				}
 
 				if (registration.active?.state === 'activated') {
 					setSwState('activated');
