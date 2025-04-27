@@ -10,22 +10,23 @@ function Index() {
 	const router = useRouter();
 
 	const registerWorker = async () => {
-		if ('serviceWorker' in navigator) {
-			setLoading(true);
-			navigator.serviceWorker
-				.register('/sw.js', { scope: '/' })
-				.then(registration => {
-					if (registration.scope) {
-						router.navigate({ href: '/player' });
-					}
-				})
-				.catch(error => {
-					console.error('Service Worker registration failed:', error);
-				})
-				.finally(() => {
-					setLoading(false);
-				});
-		}
+		router.navigate({ href: '/player' });
+		// if ('serviceWorker' in navigator) {
+		// 	setLoading(true);
+		// 	navigator.serviceWorker
+		// 		.register('/sw.js', { scope: '/' })
+		// 		.then(registration => {
+		// 			if (registration.scope) {
+
+		// 			}
+		// 		})
+		// 		.catch(error => {
+		// 			console.error('Service Worker registration failed:', error);
+		// 		})
+		// 		.finally(() => {
+		// 			setLoading(false);
+		// 		});
+		// }
 	};
 
 	return (
