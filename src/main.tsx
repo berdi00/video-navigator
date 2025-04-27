@@ -24,9 +24,9 @@ if ('serviceWorker' in navigator) {
 	const registerServiceWorker = async () => {
 		try {
 			console.log('Attempting to register service worker...');
-			const registration = await navigator.serviceWorker.register('sw.js', {
+			const registration = await navigator.serviceWorker.register('/sw.js', {
 				// Ensure leading slash
-				scope: './',
+				scope: '.',
 			});
 			console.log('Service worker registration successful:', registration);
 
