@@ -18,17 +18,20 @@ declare module '@tanstack/react-router' {
 
 // Register the service worker if it's not already registered
 if ('serviceWorker' in navigator) {
-	window.addEventListener('load', () => {
-		// Register the service worker (assuming sw.js is in the public directory)
-		navigator.serviceWorker
-			.register('/sw.js') // This is where your compiled service worker file should be
-			.then(registration => {
-				console.log('Service Worker registered with scope:', registration.scope);
-			})
-			.catch(error => {
-				console.log('Service Worker registration failed:', error);
-			});
-	});
+	try {
+		const registration = await navigator.serviceWorker.register('sw.js', {
+			scope: './',
+		});
+		if (registration.installing) {
+			console.log('Service worker installing');
+		} else if (registration.waiting) {
+			console.log('Service worker installed');
+		} else if (registration.active) {
+			console.log('Service worker active');
+		}
+	} catch (error) {
+		console.error(`Registration failed with ${error}`);
+	}
 }
 
 // Render the app
