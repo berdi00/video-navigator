@@ -1,12 +1,12 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { useState } from 'react';
+// import { useState } from 'react';
 
 export const Route = createFileRoute('/')({
 	component: Index,
 });
 
 function Index() {
-	const [loading, setLoading] = useState(false);
+	// const [loading, setLoading] = useState(false);
 	const router = useRouter();
 
 	const registerWorker = async () => {
@@ -31,8 +31,8 @@ function Index() {
 
 	return (
 		<div className='home'>
-			<button disabled={loading} onClick={registerWorker} className='start_button'>
-				{loading ? 'Loading' : 'Start'}
+			<button onClick={registerWorker} className='start_button'>
+				{'Start'}
 			</button>
 		</div>
 	);
