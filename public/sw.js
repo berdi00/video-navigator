@@ -175,10 +175,7 @@ self.addEventListener('fetch', event => {
 				})
 				.catch(() => {
 					// If the network request fails for a video, try to serve the offline video
-					if (event.request.url.includes('/video/')) {
-						return caches.match('/video/offline.mp4');
-					}
-					return undefined; // Or handle other failures as needed
+					return caches.match('/video/offline.mp4');
 				});
 		})
 	);
