@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
 
 export const Route = createFileRoute('/')({
@@ -7,17 +7,17 @@ export const Route = createFileRoute('/')({
 
 function Index() {
 	const [loading, setLoading] = useState(false);
-	const [init, setInit] = useState(false);
-	const [isRegistered, setIsRegistered] = useState(false);
+	const router = useRouter();
+
 	const registerWorker = async () => {
 		if ('serviceWorker' in navigator) {
-			setInit(true);
 			setLoading(true);
 			navigator.serviceWorker
 				.register('/sw.js', { scope: '/' })
 				.then(registration => {
-					console.log('Service Worker registered with scope:', registration.scope);
-					setIsRegistered(true);
+					if (registration.scope) {
+						router.navigate({ href: '/player' });
+					}
 				})
 				.catch(error => {
 					console.error('Service Worker registration failed:', error);
@@ -30,13 +30,9 @@ function Index() {
 
 	return (
 		<div className='home'>
-			{loading && <h1>Loading...</h1>}
-			<button onClick={registerWorker} className='start_button'>
-				Start
+			<button disabled={loading} onClick={registerWorker} className='start_button'>
+				{loading ? 'Loading' : 'Start'}
 			</button>
-			{!loading && init && (
-				<h3>{isRegistered ? 'Successfully Registered worker' : 'Failure in registering worker'}</h3>
-			)}
 		</div>
 	);
 }
