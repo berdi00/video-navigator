@@ -1,4 +1,4 @@
-const CACHE_NAME = 'video-cache-v1'; // A specific cache name for videos
+const CACHE_NAME = 'video-cache-v1';
 const allData = [
 	'https://cdn.kinestex.com/uploads%2Fcompressed%2F01yl8biK4k4RHNHoXh3u.mp4',
 	'https://cdn.kinestex.com/uploads%2Fcompressed%2F04Sgr5lfVgjbt8NWELvm.mp4',
@@ -142,6 +142,12 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
 	console.log('[Service Worker] Fetch', event.request.url);
+
+	// Ignore requests from Chrome extensions
+	if (event.request.url.startsWith('chrome-extension://')) {
+		return fetch(event.request);
+	}
+
 	event.respondWith(
 		caches.match(event.request).then(response => {
 			// Cache hit - return response
