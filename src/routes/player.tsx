@@ -27,6 +27,7 @@ function Player() {
 		<div className='player'>
 			<div className='video-container'>
 				<video
+					loop
 					onLoadStart={() => setVideoLoading(true)}
 					onLoadedData={() => setVideoLoading(false)}
 					autoPlay
