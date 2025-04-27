@@ -10,85 +10,104 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root';
-import { Route as PlayerImport } from './routes/player';
-import { Route as IndexImport } from './routes/index';
+import { Route as rootRoute } from './routes/__root'
+import { Route as PlayerImport } from './routes/player'
+import { Route as PendingImport } from './routes/pending'
+import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
 
 const PlayerRoute = PlayerImport.update({
-	id: '/player',
-	path: '/player',
-	getParentRoute: () => rootRoute,
-} as any);
+  id: '/player',
+  path: '/player',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PendingRoute = PendingImport.update({
+  id: '/pending',
+  path: '/pending',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
-	id: '/',
-	path: '/',
-	getParentRoute: () => rootRoute,
-} as any);
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
-	interface FileRoutesByPath {
-		'/': {
-			id: '/';
-			path: '/';
-			fullPath: '/';
-			preLoaderRoute: typeof IndexImport;
-			parentRoute: typeof rootRoute;
-		};
-		'/player': {
-			id: '/player';
-			path: '/player';
-			fullPath: '/player';
-			preLoaderRoute: typeof PlayerImport;
-			parentRoute: typeof rootRoute;
-		};
-	}
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/pending': {
+      id: '/pending'
+      path: '/pending'
+      fullPath: '/pending'
+      preLoaderRoute: typeof PendingImport
+      parentRoute: typeof rootRoute
+    }
+    '/player': {
+      id: '/player'
+      path: '/player'
+      fullPath: '/player'
+      preLoaderRoute: typeof PlayerImport
+      parentRoute: typeof rootRoute
+    }
+  }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-	'/': typeof IndexRoute;
-	'/player': typeof PlayerRoute;
+  '/': typeof IndexRoute
+  '/pending': typeof PendingRoute
+  '/player': typeof PlayerRoute
 }
 
 export interface FileRoutesByTo {
-	'/': typeof IndexRoute;
-	'/player': typeof PlayerRoute;
+  '/': typeof IndexRoute
+  '/pending': typeof PendingRoute
+  '/player': typeof PlayerRoute
 }
 
 export interface FileRoutesById {
-	__root__: typeof rootRoute;
-	'/': typeof IndexRoute;
-	'/player': typeof PlayerRoute;
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/pending': typeof PendingRoute
+  '/player': typeof PlayerRoute
 }
 
 export interface FileRouteTypes {
-	fileRoutesByFullPath: FileRoutesByFullPath;
-	fullPaths: '/' | '/player';
-	fileRoutesByTo: FileRoutesByTo;
-	to: '/' | '/player';
-	id: '__root__' | '/' | '/player';
-	fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/pending' | '/player'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/pending' | '/player'
+  id: '__root__' | '/' | '/pending' | '/player'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-	IndexRoute: typeof IndexRoute;
-	PlayerRoute: typeof PlayerRoute;
+  IndexRoute: typeof IndexRoute
+  PendingRoute: typeof PendingRoute
+  PlayerRoute: typeof PlayerRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-	IndexRoute: IndexRoute,
-	PlayerRoute: PlayerRoute,
-};
+  IndexRoute: IndexRoute,
+  PendingRoute: PendingRoute,
+  PlayerRoute: PlayerRoute,
+}
 
 export const routeTree = rootRoute
-	._addFileChildren(rootRouteChildren)
-	._addFileTypes<FileRouteTypes>();
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -97,11 +116,15 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/pending",
         "/player"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/pending": {
+      "filePath": "pending.tsx"
     },
     "/player": {
       "filePath": "player.tsx"
