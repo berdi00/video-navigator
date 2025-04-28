@@ -19,7 +19,6 @@ function Pending() {
 
 					if (registration.installing) {
 						registration.installing.addEventListener('statechange', () => {
-							console.log('Installing worker state: -> registration', registration);
 							if (registration.active?.state === 'activated') {
 								setSwState('activated');
 							}
@@ -29,10 +28,7 @@ function Pending() {
 					} else if (registration.active) {
 						setSwState('activated');
 					}
-
-					console.log('Service worker registered successfully:', registration);
-				} catch (error) {
-					console.error('Service worker registration failed:', error);
+				} catch {
 					setSwState('failed');
 				}
 			} else {

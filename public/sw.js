@@ -114,6 +114,14 @@ const putInCache = async (request, response) => {
 };
 
 const cacheFirst = async ({ request, fallbackUrl }) => {
+	// Ignore non-GET requests, WebSocket upgrades, etc
+	if (request.method !== 'GET' || request.headers.get('upgrade') === 'websocket') {
+		return;
+	}
+	// Ignore requests from Chrome extensions
+	if (request.url.startsWith('chrome-extension://')) {
+		return fetch(request);
+	}
 	// First try to get the resource from the cache
 	const responseFromCache = await caches.match(request);
 	if (responseFromCache) {
@@ -162,7 +170,6 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-	console.log('[Service Worker] Activate');
 	// Clean up old caches
 	event.waitUntil(
 		caches.keys().then(cacheNames => {
@@ -170,7 +177,6 @@ self.addEventListener('activate', event => {
 				cacheNames
 					.map(cacheName => {
 						if (cacheName !== CACHE_NAME) {
-							console.log('[Service Worker] Deleting old cache:', cacheName);
 							return caches.delete(cacheName);
 						}
 						return null;
