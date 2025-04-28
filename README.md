@@ -1,54 +1,58 @@
-# React + TypeScript + Vite
+# 📼 Instant-Play Video Navigator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Instant-Play Video Navigator** is a simple yet powerful offline-capable video player built using modern front-end technologies. It allows users to preload videos via a service worker and navigate between them seamlessly, even without an internet connection.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Resources that helped to build
 
-## Expanding the ESLint configuration
+- [CacheStorage API](https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- [Simple service worker example](https://github.com/mdn/dom-examples/tree/main/service-worker/simple-service-worker)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🛠️ Built With
+
+- **React** – Front-end library for building dynamic UIs
+- **TypeScript** – Strongly typed superset of JavaScript for safer code
+- **Vite** – Next-generation front-end tooling (fast dev server and optimized build)
+- **TanStack Router** – Type-safe, file-based routing for React applications
+- **pnpm** – Fast and efficient package manager
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (>=18 recommended)
+- pnpm (preferred)  
+  Install pnpm globally if you don't have it yet:
+  ```bash
+  npm install -g pnpm
+  ```
+
+### Installation
+
+Clone the repository and install dependancies
+
+```bash
+git clone https://github.com/berdi00/video-navigator
+cd video-navigator
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Running the Development Server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+pnm dev
 ```
+
+> **Note:** Service worker will fail to register in dev server, please read [Why is my service worker failing to register](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers#why_is_my_service_worker_failing_to_register)
+
+## Briefly about my approach
+
+To be honest, because i was new in caching, and working with service worker, i had to consume a lot of resources to start building the project. The first thing i did was to filter the real video links from all links (some of them are broken).And next step was to create service worker to make caching possible.
+
+I had a lot of trouble in registering the service worker at first, had to make multiple deployments to vercel to try out different approach.(in dev server, it was not possible to register). After successfully registering, installing, and activating the service worker, the second issue emerged which was sw was intercepting all fetch requests (chrome extensions, websocket that vite using) which i fixed it later.
+
+Finally, everything worked out amazingly, once the service worker registered and active, the videos can be played offline. Performance is also faster than i imagined.
