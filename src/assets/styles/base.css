@@ -38,6 +38,7 @@ body {
 	height: 95vh;
 	display: flex;
 	flex-direction: column;
+	align-items: center;
 	padding: 10px;
 	box-sizing: border-box; /* important to not overflow */
 }
@@ -68,6 +69,7 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	margin-top: 10px;
+	width: 410px;
 }
 
 /* Buttons styling */
@@ -80,6 +82,10 @@ body {
 	border-radius: 10px;
 	font-size: 1.2rem;
 	cursor: pointer;
+}
+
+.tracking {
+	font-size: large;
 }
 
 .loader {

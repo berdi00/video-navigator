@@ -37,6 +37,9 @@ function Player() {
 			{videoLoading && <div className='loader'>Loading</div>}
 			<div className='control_buttons'>
 				<button onClick={e => handlePrevNext(-1, e)}>Prev</button>
+				<span className='tracking'>
+					{currentVideo + 1}/{videos.length - 1}
+				</span>
 				<button onClick={e => handlePrevNext(1, e)}>Next</button>
 			</div>
 		</div>
