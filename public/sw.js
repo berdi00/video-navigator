@@ -103,24 +103,67 @@ const allData = [
 ];
 const ASSETS_TO_CACHE = allData.filter(item => item.endsWith('.mp4'));
 
+const addResourcesToCache = async resources => {
+	const cache = await caches.open(CACHE_NAME);
+	await cache.addAll(resources);
+};
+
+const putInCache = async (request, response) => {
+	const cache = await caches.open(CACHE_NAME);
+	await cache.put(request, response);
+};
+
+const cacheFirst = async ({ request, fallbackUrl }) => {
+	// First try to get the resource from the cache
+	const responseFromCache = await caches.match(request);
+	if (responseFromCache) {
+		return responseFromCache;
+	}
+
+	// Next try to use the preloaded response, if it's there
+	// NOTE: Chrome throws errors regarding preloadResponse, see:
+	// https://bugs.chromium.org/p/chromium/issues/detail?id=1420515
+	// https://github.com/mdn/dom-examples/issues/145
+	// To avoid those errors, remove or comment out this block of preloadResponse
+	// code along with enableNavigationPreload() and the "activate" listener.
+	// const preloadResponse = await preloadResponsePromise;
+	// if (preloadResponse) {
+	//   console.info('using preload response', preloadResponse);
+	//   putInCache(request, preloadResponse.clone());
+	//   return preloadResponse;
+	// }
+
+	// Next try to get the resource from the network
+	try {
+		const responseFromNetwork = await fetch(request.clone());
+		// response may be used only once
+		// we need to save clone to put one copy in cache
+		// and serve second one
+		putInCache(request, responseFromNetwork.clone());
+		return responseFromNetwork;
+	} catch (error) {
+		const fallbackResponse = await caches.match(fallbackUrl);
+		if (fallbackResponse) {
+			return fallbackResponse;
+		}
+		// when even the fallback response is not available,
+		// there is nothing we can do, but we must always
+		// return a Response object
+		return new Response('Network error happened', {
+			status: 408,
+			headers: { 'Content-Type': 'text/plain' },
+		});
+	}
+};
+
 self.addEventListener('install', event => {
 	console.log('[Service Worker] Install');
-	event.waitUntil(
-		caches
-			.open(CACHE_NAME)
-			.then(cache => {
-				console.log('[Service Worker] Caching video assets');
-				return cache.addAll(ASSETS_TO_CACHE);
-			})
-			.catch(err => console.error('[Service Worker] Error caching assets', err))
-	);
-	// Skip waiting ensures the new service worker activates immediately
-	self.skipWaiting();
+	event.waitUntil(addResourcesToCache(ASSETS_TO_CACHE));
 });
 
 self.addEventListener('activate', event => {
 	console.log('[Service Worker] Activate');
-	// Clean up old caches (optional, but good practice)
+	// Clean up old caches
 	event.waitUntil(
 		caches.keys().then(cacheNames => {
 			return Promise.all(
@@ -136,50 +179,17 @@ self.addEventListener('activate', event => {
 			);
 		})
 	);
-	// Claim clients ensures that newly opened tabs use this service worker
-	self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
-	console.log('[Service Worker] Fetch', event.request.url);
-
-	// Ignore requests from Chrome extensions
-	if (event.request.url.startsWith('chrome-extension://')) {
-		return fetch(event.request);
-	}
-
 	event.respondWith(
-		caches.match(event.request).then(response => {
-			// Cache hit - return response
-			if (response) {
-				console.log('[Service Worker] Cache hit for:', event.request.url);
-				return response;
-			}
-			// Not in cache - fetch from network
-			console.log('[Service Worker] Network request for:', event.request.url);
-			return fetch(event.request)
-				.then(response => {
-					// Check if the response is valid
-					if (!response || response.status !== 200 || response.type !== 'basic') {
-						return response;
-					}
-					// Clone the response because it can only be consumed once
-					const responseToCache = response.clone();
-
-					caches.open(CACHE_NAME).then(cache => {
-						console.log('[Service Worker] Caching new asset:', event.request.url);
-						cache.put(event.request, responseToCache);
-					});
-
-					return response;
-				})
-				.catch(() => {
-					// If the network request fails for a video, try to serve the offline video
-					return caches.match('/video/offline.mp4');
-				});
+		cacheFirst({
+			request: event.request,
+			fallbackUrl: '/video/offline.mp4',
 		})
 	);
 });
+
 self.addEventListener('message', event => {
 	if (event.data.type === 'SKIP_WAITING') {
 		self.skipWaiting().then(() => {
