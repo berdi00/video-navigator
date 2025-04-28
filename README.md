@@ -44,7 +44,7 @@ pnpm install
 ### Running the Development Server
 
 ```bash
-pnm dev
+pnpm dev
 ```
 
 > **Note:** Service worker will fail to register in dev server, please read [Why is my service worker failing to register](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers#why_is_my_service_worker_failing_to_register)
